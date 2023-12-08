@@ -1,4 +1,5 @@
 import argparse
+import time
 
 import cv2
 import numpy as np
@@ -39,7 +40,10 @@ class VideoReader(object):
             pass
 
     def __iter__(self):
-        self.cap = cv2.VideoCapture(self.file_name)
+        self.cap = cv2.VideoCapture(self.file_name, cv2.CAP_DSHOW)
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+        self.cap.set(cv2.CAP_PROP_FPS, 60)
         if not self.cap.isOpened():
             raise IOError('Video {} cannot be opened'.format(self.file_name))
         return self
@@ -89,6 +93,7 @@ def run_demo(net, image_provider, height_size, cpu, track, smooth):
     previous_poses = []
     delay = 1
     for img in image_provider:
+        s_time = time.time()
         orig_img = img.copy()
         heatmaps, pafs, scale, pad = infer_fast(net, img, height_size, stride, upsample_ratio, cpu)
 
@@ -127,6 +132,8 @@ def run_demo(net, image_provider, height_size, cpu, track, smooth):
                             cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 255))
         cv2.imshow('Lightweight Human Pose Estimation Python Demo', img)
         key = cv2.waitKey(delay)
+        print('use time', time.time() - s_time)
+
         if key == 27:  # esc
             return
         elif key == 112:  # 'p'
@@ -164,3 +171,4 @@ if __name__ == '__main__':
         args.track = 0
 
     run_demo(net, frame_provider, args.height_size, args.cpu, args.track, args.smooth)
+

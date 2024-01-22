@@ -12,11 +12,16 @@ class Pose:
                  'r_hip', 'r_knee', 'r_ank', 'l_hip', 'l_knee', 'l_ank',
                  'r_eye', 'l_eye',
                  'r_ear', 'l_ear']
-    sigmas = np.array([.26, .79, .79, .72, .62, .79, .72, .62, 1.07, .87, .89, 1.07, .87, .89, .25, .25, .35, .35],
+    sigmas = np.array([.26, .79,
+                       .79, .72, .62, .79, .72, .62,
+                       1.07, .87, .89, 1.07, .87, .89,
+                       .25, .25,
+                       .35, .35],
                       dtype=np.float32) / 10.0
     vars = (sigmas * 2) ** 2
     last_id = -1
-    color = [0, 224, 255]
+    # color = [0, 224, 255]
+    color = [255, 255, 0]
 
     def __init__(self, keypoints, confidence):
         super().__init__()
@@ -59,7 +64,7 @@ class Pose:
                 x_b, y_b = self.keypoints[kpt_b_id]
                 cv2.circle(img, (int(x_b), int(y_b)), 3, Pose.color, -1)
             if global_kpt_a_id != -1 and global_kpt_b_id != -1:
-                cv2.line(img, (int(x_a), int(y_a)), (int(x_b), int(y_b)), Pose.color, 2)
+                cv2.line(img, (int(x_a), int(y_a)), (int(x_b), int(y_b)), Pose.color, 4)
 
 
 def get_similarity(a, b, threshold=0.5):
@@ -74,7 +79,7 @@ def get_similarity(a, b, threshold=0.5):
     return num_similar_kpt
 
 
-def track_poses(previous_poses, current_poses, threshold=3, smooth=False):
+def track_poses(previous_poses, current_poses, threshold=3, smooth=True):
     """Propagate poses ids from previous frame results. Id is propagated,
     if there are at least `threshold` similar keypoints between pose from previous frame and current.
     If correspondence between pose on previous and current frame was established, pose keypoints are smoothed.

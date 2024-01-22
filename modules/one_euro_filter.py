@@ -21,7 +21,7 @@ class LowPassFilter:
 
 
 class OneEuroFilter:
-    def __init__(self, freq=15, mincutoff=1, beta=0.05, dcutoff=1):
+    def __init__(self, freq=60, mincutoff=1, beta=0.05, dcutoff=1):
         self.freq = freq
         self.mincutoff = mincutoff
         self.beta = beta
